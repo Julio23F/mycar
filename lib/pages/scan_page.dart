@@ -1,4 +1,9 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 
 import 'manette.dart';
 
@@ -10,6 +15,102 @@ class ScanPage extends StatefulWidget {
 }
 
 class _ScanPageState extends State<ScanPage> {
+
+  // final BlueConnectionManager _connectionManager = BlueConnectionManager();
+  late BluetoothConnection connection;
+
+  final String targetMacAddress = "00:23:02:34:DE:91";
+
+  bool isConnected = false;
+
+  final List<String> _humidityHistory = [];
+  final StreamController<List<String>> _humidityStreamController = StreamController<List<String>>.broadcast();
+
+
+  void connectToDevice() async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
+    try {
+      BluetoothConnection.toAddress(targetMacAddress).then((_connection) {
+        print('Connected to device');
+        Navigator.pop(context);
+        _connection.input!.listen((Uint8List data) {
+          String newData = utf8.decode(data);
+          _humidityHistory.add(newData);
+          _humidityStreamController.add(_humidityHistory);
+
+          // String newData = utf8.decode(data);
+          // _humidityHistory.add(newData);
+          // _humidityStreamController.add(_humidityHistory.map((humidity) => double.parse(humidity).toStringAsFixed(2)).toList());
+
+        });
+        setState(() {
+          connection = _connection;
+          isConnected = true;
+        });
+
+        // Rediriger vers ControllPage
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => JoystickExample()
+
+            // builder: (context) => ControllPage(connection: connection, humidityHistory: _humidityStreamController.stream),
+          ),
+        );
+      }).catchError((error) {
+        print('Cannot connect, exception occurred: $error');
+        Navigator.pop(context);
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Erreur de connexion'),
+              content: Text('Impossible de se connecter à cette appareil.'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      });
+    } catch (error) {
+      print('Cannot connect, exception occurred: $error');
+      Navigator.pop(context);
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Erreur de connexion'),
+            content: Text('Impossible de se connecter à cette appareil.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,12 +168,14 @@ class _ScanPageState extends State<ScanPage> {
               SizedBox(height: 30),
               ElevatedButton(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => JoystickExample()
-                    ),
-                  );
+                  connectToDevice();
+
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //     builder: (context) => JoystickExample()
+                  //   ),
+                  // );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.orange,
