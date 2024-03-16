@@ -60,7 +60,7 @@ class _ScanPageState extends State<ScanPage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => JoystickExample()
+            builder: (context) => JoystickExample(connection: connection)
 
             // builder: (context) => ControllPage(connection: connection, humidityHistory: _humidityStreamController.stream),
           ),
@@ -162,7 +162,8 @@ class _ScanPageState extends State<ScanPage> {
                 style: TextStyle(
                     fontWeight: FontWeight.w700,
                     fontSize: 17,
-                    color: Colors.white30
+                    color: Colors.white30,
+
                 ),
               ),
               SizedBox(height: 30),
