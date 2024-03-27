@@ -23,7 +23,7 @@ class _ScanPageState extends State<ScanPage> {
 
   bool isConnected = false;
 
-  final List<String> _humidityHistory = [];
+  // final List<String> _humidityHistory = [];
   final StreamController<List<String>> _humidityStreamController = StreamController<List<String>>.broadcast();
 
 
@@ -41,16 +41,16 @@ class _ScanPageState extends State<ScanPage> {
       BluetoothConnection.toAddress(targetMacAddress).then((_connection) {
         print('Connected to device');
         Navigator.pop(context);
-        _connection.input!.listen((Uint8List data) {
-          String newData = utf8.decode(data);
-          _humidityHistory.add(newData);
-          _humidityStreamController.add(_humidityHistory);
-
-          // String newData = utf8.decode(data);
-          // _humidityHistory.add(newData);
-          // _humidityStreamController.add(_humidityHistory.map((humidity) => double.parse(humidity).toStringAsFixed(2)).toList());
-
-        });
+        // _connection.input!.listen((Uint8List data) {
+        //   String newData = utf8.decode(data);
+        //   _humidityHistory.add(newData);
+        //   _humidityStreamController.add(_humidityHistory);
+        //
+        //   // String newData = utf8.decode(data);
+        //   // _humidityHistory.add(newData);
+        //   // _humidityStreamController.add(_humidityHistory.map((humidity) => double.parse(humidity).toStringAsFixed(2)).toList());
+        //
+        // });
         setState(() {
           connection = _connection;
           isConnected = true;
