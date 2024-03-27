@@ -140,21 +140,14 @@ class _ScanPageState extends State<ScanPage> {
                 ),
               ),
               Text(
-                "Commande la voiture",
+                "Commande la voiture de ton enfance",
                 style: TextStyle(
                     fontWeight: FontWeight.w700,
                     fontSize: 35,
                     color: Colors.white70
                 ),
               ),
-              Text(
-                "de ton enfance",
-                style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 35,
-                    color: Colors.white70
-                ),
-              ),
+
               SizedBox(height: 15),
 
               Text(
