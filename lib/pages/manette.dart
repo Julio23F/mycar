@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -26,6 +27,18 @@ class _JoystickExampleState extends State<JoystickExample> {
       body: SafeArea(
         child: Stack(
           children: [
+            ElevatedButton(
+                onPressed: (){
+                  sendData("on");
+                },
+                child: Text("Roule")
+            ),
+            // ElevatedButton(
+            //     onPressed: (){
+            //       sendData("off");
+            //     },
+            //     child: Text("Stop")
+            // ),
             Align(
               alignment: Alignment(0, -0.8),
               child: Joystick(
@@ -39,15 +52,10 @@ class _JoystickExampleState extends State<JoystickExample> {
                       _x = 365;
                     }
                   });
-                  if(details.x > 1) {
-                    sendData("on");
-                  }
-                  else{
-                    sendData("off");
-                  }
                 },
               ),
             ),
+
             Center(
               child: Container(
                 margin: EdgeInsets.only(left: 150),
@@ -73,6 +81,7 @@ class _JoystickExampleState extends State<JoystickExample> {
                       _y = 287;
                     }
                   });
+
                 },
               ),
             ),
@@ -82,23 +91,33 @@ class _JoystickExampleState extends State<JoystickExample> {
     );
   }
 
-  Future<void> sendData(String data) async {
+  // Future<void> sendData(String data) async {
+  //   data = data.trim();
+  //   try {
+  //     List<int> list = data.codeUnits;
+  //     Uint8List bytes = Uint8List.fromList(list);
+  //     widget.connection.output.add(bytes);
+  //     await widget.connection.output.allSent;
+  //   } catch (e) {
+  //     showDialog(
+  //       context: context,
+  //       builder: (BuildContext context) {
+  //         return AlertDialog(
+  //           title: Text("Erreur"),
+  //           content: Text("On et Off"),
+  //         );
+  //       },
+  //     );
+  //   }
+  // }
+  void sendData(String data) async {
     data = data.trim();
-    try {
-      List<int> list = data.codeUnits;
-      Uint8List bytes = Uint8List.fromList(list);
-      widget.connection.output.add(bytes);
+    if (widget.connection != null) {
+      widget.connection.output.add(utf8.encode(data));
       await widget.connection.output.allSent;
-    } catch (e) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text("Erreur"),
-            content: Text("On et Off"),
-          );
-        },
-      );
+      print('Data sent: $data');
+    } else {
+      print('Not connected to any device');
     }
   }
 }
